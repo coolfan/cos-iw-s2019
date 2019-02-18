@@ -35,7 +35,7 @@ module stlc where
   type-var : (Γ : Context) → Variable Γ → Type
   type-var (Extend t Δ) (inj₂ (Box t)) = t
   type-var (Extend t Δ) (inj₁ x) = type-var Δ x
-  type-var Empty x = _
+  type-var Empty _ = _
 
   data Type-Proof (Γ : Context) : Term Γ → Type → Set where
     Type-True : Type-Proof Γ True Boolean
@@ -54,23 +54,33 @@ module stlc where
   var-equal (Extend t Δ) (inj₁ _) (inj₂ _) = false
   var-equal (Extend t Δ) (inj₂ _) (inj₁ _) = false
   var-equal (Extend t Δ) (inj₁ i) (inj₁ j) = var-equal Δ i j
-  var-equal Empty x y = _
+  var-equal Empty _ _ = _
 
-  promote : (Γ : Context) (Δ : Context) → Term Γ → Term Δ
-  promote Γ Δ True = True
-  promote Γ Δ False = False
-  promote Γ Δ (Fun t e) = Fun t (promote (Extend t Γ) (Extend t Δ) e)
-  promote Γ Δ (App e₁ e₂) = App (promote Γ Δ e₁) (promote Γ Δ e₂)
-  promote Γ Δ (Var v) = ?
+  context-switch-id : (Γ : Context) → Variable Γ → Variable Γ
+  context-switch-id Γ x = x
 
-  subst : (Γ : Context) (Δ : Context) → Term Γ → Variable Δ → Term Δ → Term Δ
-  subst Γ Δ _ _ True = True
-  subst Γ Δ _ _ False = False
-  subst Γ Δ e n (Var i) with var-equal Δ n i
-  subst Γ Δ e n (Var i)       | true = promote Γ Δ e
-  subst Γ Δ e n (Var i)       | false = Var i
-  subst Γ Δ e n (Fun t e₂) = Fun t (subst Γ (Extend t Δ) e (inj₁ n) e₂)
-  subst Γ Δ e n (App e₁ e₂) = App (subst Γ Δ e n e₁) (subst Γ Δ e n e₂)
+  context-switch-promote-right : (Γ : Context) (Δ : Context) (t : Type) → (Variable Γ → Variable Δ) → (Variable Γ → Variable (Extend t Δ))
+  context-switch-promote-right Γ Δ t f x = inj₁ (f x)
+
+  context-switch-promote-both : (Γ : Context) (Δ : Context) (t : Type) → (Variable Γ → Variable Δ) → (Variable (Extend t Γ) → Variable (Extend t Δ))
+  context-switch-promote-both Γ Δ t f (inj₂ x) = inj₂ x
+  context-switch-promote-both Γ Δ t f (inj₁ x) = inj₁ (f x)
+
+  promote : (Γ : Context) (Δ : Context) → Term Γ → (Variable Γ → Variable Δ) → Term Δ
+  promote Γ Δ True f = True
+  promote Γ Δ False f = False
+  promote Γ Δ (Fun t e) f = Fun t (promote (Extend t Γ) (Extend t Δ) e (context-switch-promote-both Γ Δ t f))
+  promote Γ Δ (App e₁ e₂) f = App (promote Γ Δ e₁ f) (promote Γ Δ e₂ f)
+  promote Γ Δ (Var v) f = Var (f v)
+
+  subst : (Γ : Context) (Δ : Context) → Term Γ → Variable Δ → Term Δ → (Variable Γ → Variable Δ) → Term Δ
+  subst Γ Δ _ _ True f = True
+  subst Γ Δ _ _ False f = False
+  subst Γ Δ e n (Var i) f with var-equal Δ n i
+  subst Γ Δ e n (Var i) f       | true = promote Γ Δ e f
+  subst Γ Δ e n (Var i) f       | false = Var i
+  subst Γ Δ e n (Fun t e₂) f = Fun t (subst Γ (Extend t Δ) e (inj₁ n) e₂ (context-switch-promote-right Γ Δ t f))
+  subst Γ Δ e n (App e₁ e₂) f = App (subst Γ Δ e n e₁ f) (subst Γ Δ e n e₂ f)
 
   data Execution-Proof (Γ : Context) : Term Γ → Term Γ → Set where
     Execution-App₁ : (e₁ : Term Γ) (e₂ : Term Γ) (e₁′ : Term Γ) → Execution-Proof Γ e₁ e₁′ → Execution-Proof Γ (App e₁ e₂) (App e₁′ e₂)
