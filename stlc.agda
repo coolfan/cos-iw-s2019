@@ -35,7 +35,7 @@ module stlc where
   type-var : (Γ : Context) → Variable Γ → Type
   type-var (Extend t Δ) (inj₂ (Box t)) = t
   type-var (Extend t Δ) (inj₁ x) = type-var Δ x
-  type-var Empty _ = _
+  type-var Empty ()
 
   data Type-Proof (Γ : Context) : Term Γ → Type → Set where
     Type-True : Type-Proof Γ True Boolean
@@ -54,7 +54,7 @@ module stlc where
   var-equal (Extend t Δ) (inj₁ _) (inj₂ _) = false
   var-equal (Extend t Δ) (inj₂ _) (inj₁ _) = false
   var-equal (Extend t Δ) (inj₁ i) (inj₁ j) = var-equal Δ i j
-  var-equal Empty _ _ = _
+  var-equal Empty ()
 
   context-switch-id : (Γ : Context) → Variable Γ → Variable Γ
   context-switch-id Γ x = x
