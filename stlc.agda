@@ -99,13 +99,6 @@ module stlc where
     Execution-AppFun : (t₁ : Type) (e₁ : Term (Extend t₁ Γ)) (e₂ : Term Γ) (t₂ : Type) → Type-Proof Γ (Fun t₁ e₁) (Function t₁ t₂) → Type-Proof Γ e₂ t₁ → IsVal-Proof Γ e₂
       → Execution-Proof Γ (App (Fun t₁ e₁) e₂) (subst (Extend t₁ Γ) Γ e₂ (inj₂ (Box t₁)) e₁ (context-switch-id Γ) (demote-variable Γ t₁))
 
-  is-val : (Γ : Context) (e : Term Γ) (t : Type) → Type-Proof Γ e t → Maybe (IsVal-Proof Γ e)
-  is-val Γ e t (Type-True) = just IsVal-True
-  is-val Γ e t (Type-False) = just IsVal-False
-  is-val Γ (Var _) t _ = nothing
-  is-val Γ (App _ _) t _ = nothing
-  is-val Γ (Fun t₁ e) t (Type-Fun t₁ e t₂ p) = just (IsVal-Fun t₁ e t₂ (Type-Fun t₁ e t₂ p))
-
   Progress : (e : Term Empty) (t : Type) → Type-Proof Empty e t → (IsVal-Proof Empty e) ⊎ (Σ (Term Empty) (λ e′ → Execution-Proof Empty e e′))
   Progress True t Type-True = inj₁ (IsVal-True)
   Progress False t Type-False = inj₁ (IsVal-False)
