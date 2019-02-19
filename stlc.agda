@@ -116,5 +116,40 @@ module stlc where
   Progress (App (App e₁ e₃) e₂) t₂ (Type-App t₁ (App e₁ e₃) t₂ .e₂ p₁ p₂)       | inj₁ ()
   Progress (App (App e₁ e₃) e₂) t₂ (Type-App t₁ (App e₁ e₃) t₂ .e₂ p₁ p₂)       | inj₂ pₓ = inj₂ ((App (proj₁ pₓ) e₂) , (Execution-App₁ (App e₁ e₃) e₂ (proj₁ pₓ) (proj₂ pₓ)))
   Progress (App True e₂) t₂ (Type-App t₁ True t₂ e₂ () p₂) 
-  Progress (App False e₂) t₂ (Type-App t₁ False t₂ e₂ () p₂) 
+  Progress (App False e₂) t₂ (Type-App t₁ False t₂ e₂ () p₂)
+
+  context-switch : (Γ : Context) (Δ : Context) → (Variable Γ → Variable Δ) → Term Γ → Term Δ
+  context-switch Γ Δ f (Var x) = Var (f x)
+  context-switch Γ Δ f (Fun t e) = Fun t (context-switch (Extend t Γ) (Extend t Δ) (context-switch-promote-both Γ Δ t f) e)
+  context-switch Γ Δ f (App e₁ e₂) = App (context-switch Γ Δ f e₁) (context-switch Γ Δ f e₂) 
+  context-switch Γ Δ f True = True
+  context-switch Γ Δ f False = False
+
+  context-switch-id-preservation : (Γ : Context) (e : Term Γ) (t : Type) → Type-Proof Γ e t → Type-Proof Γ (context-switch Γ Γ (context-switch-id Γ) e) t
+  context-switch-id-preservation Γ .True .Boolean Type-True = Type-True
+  context-switch-id-preservation Γ .False .Boolean Type-False = Type-False
+  context-switch-id-preservation Γ .(Var v) .(type-var Γ v) (Type-Var v) = Type-Var v
+  context-switch-id-preservation Γ .(Fun t e) .(Function t t′) (Type-Fun t e t′ p) = Type-Fun t (context-switch (Extend t Γ) (Extend t Γ) (context-switch-id (Extend t Γ)) e) t′ p
+  context-switch-id-preservation Γ .(App e₁ e₂) t (Type-App t₁ e₁ .t e₂ p p₁) = Type-App t₁ (context-switch Γ Γ (λ z → z) e₁) t
+                                                                                  (context-switch Γ Γ (λ z → z) e₂)
+                                                                                  (context-switch-id-preservation Γ e₁ (Function t₁ t) p)
+                                                                                  (context-switch-id-preservation Γ e₂ t₁ p₁)
+
+  Preservation-Context-Switch : (Γ : Context) (Δ : Context) (e : Term Γ) (t : Type) (f : Variable Γ → Variable Δ) → Type-Proof Γ e t → Type-Proof Δ (context-switch Γ Δ f e) t
+  Preservation-Context-Switch Γ Δ .True .Boolean f Type-True = Type-True
+  Preservation-Context-Switch Γ Δ .False .Boolean f Type-False = Type-False
+  Preservation-Context-Switch Γ Δ .(Var v) .(type-var Γ v) f (Type-Var v) = {!!}
+  Preservation-Context-Switch Γ Δ .(Fun t e) .(Function t t′) f (Type-Fun t e t′ p) = Type-Fun t
+                                                                                        (context-switch (Extend t Γ) (Extend t Δ)
+                                                                                         (context-switch-promote-both Γ Δ t f) e)
+                                                                                        t′
+                                                                                        (Preservation-Context-Switch (Extend t Γ) (Extend t Δ) e t′
+                                                                                         (context-switch-promote-both Γ Δ t f) p)
+  Preservation-Context-Switch Γ Δ .(App e₁ e₂) t f (Type-App t₁ e₁ .t e₂ p p₁) = Type-App t₁ (context-switch Γ Δ f e₁) t (context-switch Γ Δ f e₂)
+                                                                                   (Preservation-Context-Switch Γ Δ e₁ (Function t₁ t) f p)
+                                                                                   (Preservation-Context-Switch Γ Δ e₂ t₁ f p₁)
+
+  --Preservation-Subst : (Γ : Context) (t : Type) (t′ : Type) (e : Term (Extend t Γ)) (e′ : Term Γ) → Type-Proof Γ e t′ → Type-Proof Γ e′ t → Type-Proof Γ (subst (Extend t Γ) Γ e′ (inj₂ (Box t)) e (context-switch-id Γ) (demote-variable Γ t)) t′
+  
+  --Preservation : (e : Term Empty) (t : Type) (e′ : Term Empty) → Type-Proof Empty e t → Execution-Proof Empty e e′ → Type-Proof Empty e′ t
   
