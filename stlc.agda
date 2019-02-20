@@ -19,85 +19,98 @@ module stlc where
 
   data Context : Set where
     Empty : Context
-    Extend : Type → Context → Context
+    _,_ : Context → Type → Context
 
   Variable : Context → Set
   Variable Empty = ⊥
-  Variable (Extend t Γ) = (Variable Γ) ⊎ (Type-Box t)
+  Variable (Γ , t) = (Variable Γ) ⊎ (Type-Box t)
   
   data Term (Γ : Context) : Set where
     Var : Variable Γ → Term Γ
-    Fun : ∀ t → Term (Extend t Γ) → Term Γ
+    Fun : ∀ t → Term (Γ , t) → Term Γ
     App : Term Γ → Term Γ → Term Γ
     True : Term Γ
     False : Term Γ
 
   type-var : (Γ : Context) → Variable Γ → Type
-  type-var (Extend t Δ) (inj₂ (Box t)) = t
-  type-var (Extend t Δ) (inj₁ x) = type-var Δ x
+  type-var (Δ , t) (inj₂ (Box t)) = t
+  type-var (Δ , t) (inj₁ x) = type-var Δ x
   type-var Empty ()
 
   data Type-Proof (Γ : Context) : Term Γ → Type → Set where
     Type-True : Type-Proof Γ True Boolean
     Type-False : Type-Proof Γ False Boolean
     Type-Var : (v : Variable Γ) → Type-Proof Γ (Var v) (type-var Γ v) 
-    Type-Fun : (t : Type) (e : Term (Extend t Γ)) (t′ : Type) → Type-Proof (Extend t Γ) e t′ → Type-Proof Γ (Fun t e) (Function t t′)
+    Type-Fun : (t : Type) (e : Term (Γ , t)) (t′ : Type) → Type-Proof (Γ , t) e t′ → Type-Proof Γ (Fun t e) (Function t t′)
     Type-App : (t₁ : Type) (e₁ : Term Γ) (t₂ : Type) (e₂ : Term Γ) → Type-Proof Γ e₁ (Function t₁ t₂) → Type-Proof Γ e₂ t₁ → Type-Proof Γ (App e₁ e₂) t₂
 
   data IsVal-Proof (Γ : Context) : Term Γ → Set where
     IsVal-True : IsVal-Proof Γ True
     IsVal-False : IsVal-Proof Γ False
-    IsVal-Fun : (t : Type) (e : Term (Extend t Γ)) (t′ : Type) → Type-Proof Γ (Fun t e) (Function t t′) → IsVal-Proof Γ (Fun t e)
+    IsVal-Fun : (t : Type) (e : Term (Γ , t)) (t′ : Type) → Type-Proof Γ (Fun t e) (Function t t′) → IsVal-Proof Γ (Fun t e)
 
   var-equal : (Γ : Context) → Variable Γ → Variable Γ → Bool
-  var-equal (Extend t Δ) (inj₂ _) (inj₂ _) = true
-  var-equal (Extend t Δ) (inj₁ _) (inj₂ _) = false
-  var-equal (Extend t Δ) (inj₂ _) (inj₁ _) = false
-  var-equal (Extend t Δ) (inj₁ i) (inj₁ j) = var-equal Δ i j
-  var-equal Empty () 
-
-  context-switch-id : (Γ : Context) → Variable Γ → Variable Γ
-  context-switch-id Γ x = x
-
-  context-switch-promote-right : ∀ Γ Δ t → (Variable Γ → Variable Δ) → (Variable Γ → Variable (Extend t Δ))
-  context-switch-promote-right Γ Δ t f x = inj₁ (f x)
+  var-equal (Δ , t) (inj₂ _) (inj₂ _) = true
+  var-equal (Δ , t) (inj₁ _) (inj₂ _) = false
+  var-equal (Δ , t) (inj₂ _) (inj₁ _) = false
+  var-equal (Δ , t) (inj₁ i) (inj₁ j) = var-equal Δ i j
+  var-equal Empty ()
   
-  context-switch-promote-both : (Γ : Context) (Δ : Context) (t : Type) → (Variable Γ → Variable Δ) → (Variable (Extend t Γ) → Variable (Extend t Δ))
-  context-switch-promote-both Γ Δ t f (inj₂ x) = inj₂ x
-  context-switch-promote-both Γ Δ t f (inj₁ x) = inj₁ (f x)
+  _-_ : (Γ : Context) → Variable Γ → Context
+  (Δ , t) - (inj₂ (Box t)) = Δ
+  (Δ , t) - (inj₁ x) = (Δ - x) , t
+  Empty - ()
 
-  context-switch-promote-both-opt : (Γ : Context) (Δ : Context) (t : Type) → (Variable Γ → Maybe (Variable Δ)) → (Variable (Extend t Γ) → Maybe (Variable (Extend t Δ)))
-  context-switch-promote-both-opt Γ Δ t f (inj₂ x) = just (inj₂ x)
-  context-switch-promote-both-opt Γ Δ t f (inj₁ x) with f x
-  context-switch-promote-both-opt Γ Δ t f (inj₁ x)       | just fx = just (inj₁ fx)
-  context-switch-promote-both-opt Γ Δ t f (inj₁ x)       | nothing = nothing
+  maybe-map : {A B : Set} → (A → B) → Maybe A → Maybe B
+  maybe-map f (just x) = just (f x)
+  maybe-map f nothing = nothing
 
-  promote : (Γ : Context) (Δ : Context) → Term Γ → (Variable Γ → Variable Δ) → Term Δ
-  promote Γ Δ True f = True
-  promote Γ Δ False f = False
-  promote Γ Δ (Fun t e) f = Fun t (promote (Extend t Γ) (Extend t Δ) e (context-switch-promote-both Γ Δ t f))
-  promote Γ Δ (App e₁ e₂) f = App (promote Γ Δ e₁ f) (promote Γ Δ e₂ f)
-  promote Γ Δ (Var v) f = Var (f v)
-
-  demote-variable : (Γ : Context) (t : Type) → Variable (Extend t Γ) → Maybe (Variable Γ)
-  demote-variable Γ t (inj₁ x) = just x
-  demote-variable Γ t (inj₂ _) = nothing
+  subst-var : (Γ : Context) (v : Variable Γ) → Variable Γ → Maybe (Variable (Γ - v))
+  subst-var (Δ , t) (inj₁ x) (inj₁ x₁) = maybe-map (λ x → inj₁ x) (subst-var Δ x x₁)
+  subst-var (Δ , t) (inj₁ x) (inj₂ y) = just (inj₂ y)
+  subst-var (Δ , t) (inj₂ (Box t)) (inj₁ x) = just x
+  subst-var (Δ , t) (inj₂ (Box t)) (inj₂ y₁) = nothing
+  subst-var Empty () _
   
-  subst : (Γ : Context) (Δ : Context) → Term Δ → Variable Γ → Term Γ → (Variable Δ → Variable Δ) → (Variable Γ → Maybe (Variable Δ)) → Term Δ
-  subst Γ Δ _ _ True f g = True
-  subst Γ Δ _ _ False f g = False
-  subst Γ Δ e n (Var i) f g with g i
-  subst Γ Δ e n (Var i) f g       | nothing = e 
-  subst Γ Δ e n (Var i) f g       | just x = Var x
-  subst Γ Δ e n (Fun t e₂) f g =
-    Fun t (subst (Extend t Γ) (Extend t Δ) (promote Δ (Extend t Δ) e (context-switch-promote-right Δ Δ t f)) (inj₁ n) e₂ (context-switch-promote-both Δ Δ t f) (context-switch-promote-both-opt Γ Δ t g))
-  subst Γ Δ e n (App e₁ e₂) f g = App (subst Γ Δ e n e₁ f g) (subst Γ Δ e n e₂ f g)
+  weaken-var : (Γ : Context) (v : Variable Γ) → Variable (Γ - v) → Variable Γ
+  weaken-var (Δ , t) (inj₁ x) (inj₁ x₁) = inj₁ (weaken-var Δ x x₁)
+  weaken-var (Δ , t) (inj₁ x) (inj₂ y) = inj₂ y
+  weaken-var (Δ , t) (inj₂ (Box t)) w with (Δ , t) - (inj₂ (Box t))
+  weaken-var (Δ , t) (inj₂ (Box t)) ()       | Empty
+  weaken-var (Δ , t) (inj₂ (Box t)) w       | Ε , t′ = inj₁ w
+  weaken-var Empty () _
+
+  weaken : (Γ : Context) (v : Variable Γ) → Term (Γ - v) → Term Γ
+  weaken Γ v True = True
+  weaken Γ v False = False
+  weaken Γ v (Fun t e) = Fun t (weaken (Γ , t) (inj₁ v) e)
+  weaken Γ v (App e₁ e₂) = App (weaken Γ v e₁) (weaken Γ v e₂)
+  weaken Γ v (Var v₁) = Var (weaken-var Γ v v₁)
+
+  weaken-type-proof : (Γ : Context) (v : Variable Γ) (e : Term (Γ - v)) (t : Type) → Type-Proof (Γ - v) e t → Type-Proof Γ (weaken Γ v e) t
+  weaken-type-proof Γ v .True .Boolean Type-True = Type-True
+  weaken-type-proof Γ v .False .Boolean Type-False = Type-False
+  weaken-type-proof Γ v .(Var v₁) .(type-var (Γ - v) v₁) (Type-Var v₁) = {!!}
+  weaken-type-proof Γ v .(Fun t e) .(Function t t′) (Type-Fun t e t′ p) = Type-Fun t (weaken (Γ , t) (inj₁ v) e) t′
+                                                                            (weaken-type-proof (Γ , t) (inj₁ v) e t′ p)
+  weaken-type-proof Γ v .(App e₁ e₂) t (Type-App t₁ e₁ .t e₂ p p₁) = Type-App t₁ (weaken Γ v e₁) t (weaken Γ v e₂)
+                                                                       (weaken-type-proof Γ v e₁ (Function t₁ t) p)
+                                                                       (weaken-type-proof Γ v e₂ t₁ p₁)
+  
+  subst : (Γ : Context)  (v : Variable Γ) (e :  Term (Γ - v)) → Term Γ → Type-Proof (Γ - v) e (type-var Γ v) → Term (Γ - v)
+  subst Γ v e₁ True _ = True
+  subst Γ v e₁ False _ = False
+  subst Γ v e₁ (Var i) _ with subst-var Γ v i
+  subst Γ v e₁ (Var i) _       | nothing = e₁ 
+  subst Γ v e₁ (Var i) _       | just x = Var x
+  subst Γ v e₁ (Fun t e₂) p = Fun t (subst (Γ , t) (inj₁ v) (weaken ((Γ , t) - inj₁ v) (inj₂ (Box t)) e₁) e₂ (weaken-type-proof ((Γ , t) - inj₁ v) (inj₂ (Box t)) e₁ (type-var Γ v) p))
+  subst Γ v e (App e₁ e₂) p = App (subst Γ v e e₁ p) (subst Γ v e e₂ p) 
 
   data Execution-Proof (Γ : Context) : Term Γ → Term Γ → Set where
     Execution-App₁ : (e₁ : Term Γ) (e₂ : Term Γ) (e₁′ : Term Γ) → Execution-Proof Γ e₁ e₁′ → Execution-Proof Γ (App e₁ e₂) (App e₁′ e₂)
     Execution-App₂ : (e₁ : Term Γ) (e₂ : Term Γ) (e₂′ : Term Γ) → IsVal-Proof Γ e₁ → Execution-Proof Γ e₂ e₂′ → Execution-Proof Γ (App e₁ e₂) (App e₁ e₂′)
-    Execution-AppFun : (t₁ : Type) (e₁ : Term (Extend t₁ Γ)) (e₂ : Term Γ) (t₂ : Type) → Type-Proof Γ (Fun t₁ e₁) (Function t₁ t₂) → Type-Proof Γ e₂ t₁ → IsVal-Proof Γ e₂
-      → Execution-Proof Γ (App (Fun t₁ e₁) e₂) (subst (Extend t₁ Γ) Γ e₂ (inj₂ (Box t₁)) e₁ (context-switch-id Γ) (demote-variable Γ t₁))
+    Execution-AppFun : (t₁ : Type) (e₁ : Term (Γ , t₁)) (e₂ : Term Γ) (t₂ : Type) (p : Type-Proof Γ e₂ t₁) → Type-Proof Γ (Fun t₁ e₁) (Function t₁ t₂) → IsVal-Proof Γ e₂
+      → Execution-Proof Γ (App (Fun t₁ e₁) e₂) (subst (Γ , t₁) (inj₂ (Box t₁)) e₂ e₁ p)
 
   Progress : (e : Term Empty) (t : Type) → Type-Proof Empty e t → (IsVal-Proof Empty e) ⊎ (Σ (Term Empty) (λ e′ → Execution-Proof Empty e e′))
   Progress True t Type-True = inj₁ (IsVal-True)
@@ -106,50 +119,19 @@ module stlc where
   Progress (Fun t e) (Function t t′) (Type-Fun t e t′ p) = inj₁ (IsVal-Fun t e t′ (Type-Fun t e t′ p))
   Progress (App (Var ()) e₂) t₂ (Type-App t₁ (Var ()) t₂ e₂ p₁ p₂)
   Progress (App (Fun t₁ e₁) (Var ())) t₂ (Type-App t₁ .(Fun t₁ e₁) t₂ (Var ()) (Type-Fun t₁ e₁ t₂ p₂) p₃)
-  Progress (App (Fun t₁ e₁) (Fun t e₂)) t₂ (Type-App t₁ .(Fun t₁ e₁) t₂ .(Fun t e₂) (Type-Fun t₁ e₁ t₂ p₂) (Type-Fun t e₂ t′ p′)) = inj₂ (subst (Extend t₁ Empty) Empty (Fun t e₂) (inj₂ (Box t₁)) e₁ (context-switch-id Empty) (demote-variable Empty t₁) , Execution-AppFun t₁ e₁ (Fun t e₂) t₂ (Type-Fun t₁ e₁ t₂ p₂) (Type-Fun t e₂ t′ p′) (IsVal-Fun t e₂ t′ (Type-Fun t e₂ t′ p′)))
+  Progress (App (Fun t₁ e₁) (Fun t e₂)) t₂ (Type-App t₁ .(Fun t₁ e₁) t₂ .(Fun t e₂) (Type-Fun t₁ e₁ t₂ p₂) (Type-Fun t e₂ t′ p′)) = inj₂ (subst (Empty , t₁) (inj₂ (Box t₁)) (Fun t e₂) e₁ (Type-Fun t e₂ t′ p′) , Execution-AppFun t₁ e₁ (Fun t e₂) t₂ (Type-Fun t e₂ t′ p′) (Type-Fun t₁ e₁ t₂ p₂) (IsVal-Fun t e₂ t′ (Type-Fun t e₂ t′ p′)))
   Progress (App (Fun t₁ e₁) (App e₂ e₃)) t₂ (Type-App t₁ .(Fun t₁ e₁) t₂ .(App e₂ e₃) (Type-Fun t₁ e₁ t₂ p₂) p₃) with Progress (App e₂ e₃) t₁ p₃
   Progress (App (Fun t₁ e₁) (App e₂ e₃)) t₂ (Type-App t₁ .(Fun t₁ e₁) t₂ .(App e₂ e₃) (Type-Fun t₁ e₁ t₂ p₂) p₃)       | inj₁ ()
   Progress (App (Fun t₁ e₁) (App e₂ e₃)) t₂ (Type-App t₁ .(Fun t₁ e₁) t₂ .(App e₂ e₃) (Type-Fun t₁ e₁ t₂ p₂) p₃)       | inj₂ pₓ = inj₂ (App (Fun t₁ e₁) (proj₁ pₓ) , Execution-App₂ (Fun t₁ e₁) (App e₂ e₃) (proj₁ pₓ) (IsVal-Fun t₁ e₁ t₂ (Type-Fun t₁ e₁ t₂ p₂)) (proj₂ pₓ))
-  Progress (App (Fun t₁ e₁) True) t₂ (Type-App t₁ .(Fun t₁ e₁) t₂ .True (Type-Fun t₁ e₁ t₂ p₂) p₃) = inj₂ ((subst (Extend t₁ Empty) Empty True (inj₂ (Box t₁)) e₁ (context-switch-id Empty) (demote-variable Empty t₁)) , (Execution-AppFun t₁ e₁ True t₂ (Type-Fun t₁ e₁ t₂ p₂) p₃ IsVal-True))
-  Progress (App (Fun t₁ e₁) False) t₂ (Type-App t₁ .(Fun t₁ e₁) t₂ .False (Type-Fun t₁ e₁ t₂ p₂) p₃) = inj₂ ((subst (Extend t₁ Empty) Empty False (inj₂ (Box t₁)) e₁ (context-switch-id Empty) (demote-variable Empty t₁)) , (Execution-AppFun t₁ e₁ False t₂ (Type-Fun t₁ e₁ t₂ p₂) p₃ IsVal-False))  
+  Progress (App (Fun t₁ e₁) True) t₂ (Type-App t₁ .(Fun t₁ e₁) t₂ .True (Type-Fun t₁ e₁ t₂ p₂) p₃) = inj₂ (subst (Empty , t₁) (inj₂ (Box t₁)) True e₁ p₃ , (Execution-AppFun t₁ e₁ True t₂ p₃ (Type-Fun t₁ e₁ t₂ p₂) IsVal-True))
+  Progress (App (Fun t₁ e₁) False) t₂ (Type-App t₁ .(Fun t₁ e₁) t₂ .False (Type-Fun t₁ e₁ t₂ p₂) p₃) = inj₂ (subst (Empty , t₁) (inj₂ (Box t₁)) False e₁ p₃ , (Execution-AppFun t₁ e₁ False t₂ p₃ (Type-Fun t₁ e₁ t₂ p₂) IsVal-False))  
   Progress (App (App e₁ e₃) e₂) t₂ (Type-App t₁ (App e₁ e₃) t₂ .e₂ p₁ p₂) with Progress (App e₁ e₃) (Function t₁ t₂) p₁
   Progress (App (App e₁ e₃) e₂) t₂ (Type-App t₁ (App e₁ e₃) t₂ .e₂ p₁ p₂)       | inj₁ ()
   Progress (App (App e₁ e₃) e₂) t₂ (Type-App t₁ (App e₁ e₃) t₂ .e₂ p₁ p₂)       | inj₂ pₓ = inj₂ ((App (proj₁ pₓ) e₂) , (Execution-App₁ (App e₁ e₃) e₂ (proj₁ pₓ) (proj₂ pₓ)))
   Progress (App True e₂) t₂ (Type-App t₁ True t₂ e₂ () p₂) 
   Progress (App False e₂) t₂ (Type-App t₁ False t₂ e₂ () p₂)
 
-  context-switch : (Γ : Context) (Δ : Context) → (Variable Γ → Variable Δ) → Term Γ → Term Δ
-  context-switch Γ Δ f (Var x) = Var (f x)
-  context-switch Γ Δ f (Fun t e) = Fun t (context-switch (Extend t Γ) (Extend t Δ) (context-switch-promote-both Γ Δ t f) e)
-  context-switch Γ Δ f (App e₁ e₂) = App (context-switch Γ Δ f e₁) (context-switch Γ Δ f e₂) 
-  context-switch Γ Δ f True = True
-  context-switch Γ Δ f False = False
-
-  context-switch-id-preservation : (Γ : Context) (e : Term Γ) (t : Type) → Type-Proof Γ e t → Type-Proof Γ (context-switch Γ Γ (context-switch-id Γ) e) t
-  context-switch-id-preservation Γ .True .Boolean Type-True = Type-True
-  context-switch-id-preservation Γ .False .Boolean Type-False = Type-False
-  context-switch-id-preservation Γ .(Var v) .(type-var Γ v) (Type-Var v) = Type-Var v
-  context-switch-id-preservation Γ .(Fun t e) .(Function t t′) (Type-Fun t e t′ p) = Type-Fun t (context-switch (Extend t Γ) (Extend t Γ) (context-switch-id (Extend t Γ)) e) t′ p
-  context-switch-id-preservation Γ .(App e₁ e₂) t (Type-App t₁ e₁ .t e₂ p p₁) = Type-App t₁ (context-switch Γ Γ (λ z → z) e₁) t
-                                                                                  (context-switch Γ Γ (λ z → z) e₂)
-                                                                                  (context-switch-id-preservation Γ e₁ (Function t₁ t) p)
-                                                                                  (context-switch-id-preservation Γ e₂ t₁ p₁)
-
-  Preservation-Context-Switch : (Γ : Context) (Δ : Context) (e : Term Γ) (t : Type) (f : Variable Γ → Variable Δ) → Type-Proof Γ e t → Type-Proof Δ (context-switch Γ Δ f e) t
-  Preservation-Context-Switch Γ Δ .True .Boolean f Type-True = Type-True
-  Preservation-Context-Switch Γ Δ .False .Boolean f Type-False = Type-False
-  Preservation-Context-Switch Γ Δ .(Var v) .(type-var Γ v) f (Type-Var v) = {!!}
-  Preservation-Context-Switch Γ Δ .(Fun t e) .(Function t t′) f (Type-Fun t e t′ p) = Type-Fun t
-                                                                                        (context-switch (Extend t Γ) (Extend t Δ)
-                                                                                         (context-switch-promote-both Γ Δ t f) e)
-                                                                                        t′
-                                                                                        (Preservation-Context-Switch (Extend t Γ) (Extend t Δ) e t′
-                                                                                         (context-switch-promote-both Γ Δ t f) p)
-  Preservation-Context-Switch Γ Δ .(App e₁ e₂) t f (Type-App t₁ e₁ .t e₂ p p₁) = Type-App t₁ (context-switch Γ Δ f e₁) t (context-switch Γ Δ f e₂)
-                                                                                   (Preservation-Context-Switch Γ Δ e₁ (Function t₁ t) f p)
-                                                                                   (Preservation-Context-Switch Γ Δ e₂ t₁ f p₁)
-
-  --Preservation-Subst : (Γ : Context) (t : Type) (t′ : Type) (e : Term (Extend t Γ)) (e′ : Term Γ) → Type-Proof Γ e t′ → Type-Proof Γ e′ t → Type-Proof Γ (subst (Extend t Γ) Γ e′ (inj₂ (Box t)) e (context-switch-id Γ) (demote-variable Γ t)) t′
+  --Preservation-Subst : (Γ : Context) 
   
   --Preservation : (e : Term Empty) (t : Type) (e′ : Term Empty) → Type-Proof Empty e t → Execution-Proof Empty e e′ → Type-Proof Empty e′ t
   
