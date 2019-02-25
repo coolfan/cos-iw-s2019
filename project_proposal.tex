@@ -1,0 +1,57 @@
+\documentclass[10pt, letterpaper]{article}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{enumerate}
+\usepackage{graphicx}
+\usepackage[margin=1in]{geometry}
+\usepackage{cite}
+\usepackage{url}
+\title{Comparing Proof Techniques on the Simply Typed Lambda Calculus between ITT and HoTT}
+\author{Yanjun Yang, 2020\\Advisor: David Walker}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+%%-----------BEGIN WORK------------------------------------
+
+\section{Motivation and Goal}
+\begin{flushleft}
+Homotopy Type Theory, and its constructive interpretation Cubical Type Theory, is a relatively new area of research and provides new techniques for defining and proving various properties, such as equivalences between types of objects. The goal of this project is to explore the advantages and disadvantages of using these new techniques to demonstrate properties, such as type safety, of the Simply Typed Lambda Calculus, as well as properties of the proofs themselves. We will be comparing previous methods of writing these proofs in Intensional Type Theory by using the proof assistant Agda, and new methods in Cubical Type Theory by using the cubical extensions to Agda.
+\end{flushleft}
+
+\section{Problem Background and Related Work}
+\begin{flushleft}
+A large amount of work has been done in the research of programming languages. The book \textit{Types and Programming Languages} provides an overview of the historical developments in this discipline, and it explains the function of evaluation rules and the type system of the simply-typed lambda calculus, which is the object of study of this project \cite{tatl}. Specifically, it provides the outline of the classical inductive proof of type safety (divided into the progress and preservation theorems) for the simply typed lambda calculus. Simultaneously, there has been a move in the community to find a univalent foundation for mathematics as a whole, and more recently, Homotopy Type Theory, and a constructive implementation of it called Cubical Type Theory, was developed and formalized to address this new area of research \cite{hottbook, cchm, cartesiancubical1, cartesiancubical2, cubicalmodel}. Very recently, the Agda proof environment was augmented with cubical type-theoretic primitives, allowing one to use the new techniques in proofs \cite{cubicalagda}. This project will seek to connect the ideas found in \textit{Types and Programming Languages} and in Cubical Type Theory by producing known proofs, such as progress and preservation, using cubical techniques to compare the advantages and disadvantages of these new proof techniques.
+\end{flushleft}
+
+\section{Approach}
+\begin{flushleft}
+The key approach of this project is to implement these proofs using the proof assistant Agda. Doing so gives us two advantages as opposed to proving these theorems manually. Firstly, it allows us to formalize the logic that is behind the proof of type-safety in the simply-typed lambda calculus and allow us to check that the proof is carried out correct. Second, it gives us a common concrete platform on which we can define appropriate metrics to compare our different proof techniques, as rigorously reasoning about proofs written in prose is more difficult.
+\end{flushleft}
+
+\section{Plan}
+\begin{flushleft}
+Below is a basic outline of the steps that I will take in this project.
+\begin{enumerate}[1.]
+	\item Learn about the simply-typed lambda calculus and the associated progress and preservation theorems.
+	\item Learn how to use the Agda proof assistant and how to write proofs in a type theory (i.e. using constructive logic).
+	\item Learn the additions that Cubical Type Theory makes to the existing type theories and how to use these additions in proofs.
+	\item Define the simply-typed lambda calculus in Agda and prove type safety (progress and preservation theorems) using standard (non-cubical) Agda.
+	\item Define the simply-typed lambda calculus in cubical Agda and prove type safety.
+	\item Evaluate the advantages and disadvantages of these proof methods.
+\end{enumerate}
+As of \today, I have completed steps 1 and 2, and have completed parts of steps 3 and 4 of the above plan. 
+\end{flushleft}
+
+\section{Evaluation}
+\begin{flushleft}
+The success of this project will primarily be measured by comparing the lengths of the progress and preservation theorems in standard and cubical Agda and seeing if cubical methods can shorten the proofs. Specifically, we will be measuring both the number of (non-whitespace, non-comment) lines of definitions of the simply-typed lambda calculus, as well as the number of lines of the proofs of the theorems themselves. We hope to show that the cubical version is able to save a significant number of lines of proof at the cost of only a few more lines of definition.
+\end{flushleft}
+
+\bibliography{bib}
+\bibliographystyle{unsrt}
+\end{document}
