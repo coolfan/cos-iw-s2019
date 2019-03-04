@@ -144,13 +144,13 @@ module stlc where
   Progress (App (Fun t₁ e₁) (Var ())) t₂ (Type-App t₁ .(Fun t₁ e₁) t₂ (Var ()) (Type-Fun t₁ e₁ t₂ p₂) p₃)
   Progress (App (Fun t₁ e₁) (Fun t e₂)) t₂ (Type-App t₁ .(Fun t₁ e₁) t₂ .(Fun t e₂) (Type-Fun t₁ e₁ t₂ p₂) (Type-Fun t e₂ t′ p′)) = inj₂ (subst (Empty , t₁) (inj₂ (Box t₁)) t₂ (Fun t e₂) e₁ (Type-Fun t e₂ t′ p′) p₂ , Execution-AppFun t₁ e₁ (Fun t e₂) t₂ (Type-Fun t e₂ t′ p′) p₂ (IsVal-Fun t e₂ t′ (Type-Fun t e₂ t′ p′)))
   Progress (App (Fun t₁ e₁) (App e₂ e₃)) t₂ (Type-App t₁ .(Fun t₁ e₁) t₂ .(App e₂ e₃) (Type-Fun t₁ e₁ t₂ p₂) p₃) with Progress (App e₂ e₃) t₁ p₃
-  Progress (App (Fun t₁ e₁) (App e₂ e₃)) t₂ (Type-App t₁ .(Fun t₁ e₁) t₂ .(App e₂ e₃) (Type-Fun t₁ e₁ t₂ p₂) p₃)       | inj₁ ()
-  Progress (App (Fun t₁ e₁) (App e₂ e₃)) t₂ (Type-App t₁ .(Fun t₁ e₁) t₂ .(App e₂ e₃) (Type-Fun t₁ e₁ t₂ p₂) p₃)       | inj₂ pₓ = inj₂ (App (Fun t₁ e₁) (proj₁ pₓ) , Execution-App₂ (Fun t₁ e₁) (App e₂ e₃) (proj₁ pₓ) (IsVal-Fun t₁ e₁ t₂ (Type-Fun t₁ e₁ t₂ p₂)) (proj₂ pₓ))
+  ...                                                                                                                                                                               | inj₁ ()
+  ...                                                                                                                                                                               | inj₂ (e′ , x) = inj₂ (App (Fun t₁ e₁) e′ , Execution-App₂ (Fun t₁ e₁) (App e₂ e₃) e′ (IsVal-Fun t₁ e₁ t₂ (Type-Fun t₁ e₁ t₂ p₂)) x)
   Progress (App (Fun t₁ e₁) True) t₂ (Type-App t₁ .(Fun t₁ e₁) t₂ .True (Type-Fun t₁ e₁ t₂ p₂) p₃) = inj₂ (subst (Empty , t₁) (inj₂ (Box t₁)) t₂ True e₁ p₃ p₂ , (Execution-AppFun t₁ e₁ True t₂ p₃ p₂ IsVal-True))
   Progress (App (Fun t₁ e₁) False) t₂ (Type-App t₁ .(Fun t₁ e₁) t₂ .False (Type-Fun t₁ e₁ t₂ p₂) p₃) = inj₂ (subst (Empty , t₁) (inj₂ (Box t₁)) t₂ False e₁ p₃ p₂ , (Execution-AppFun t₁ e₁ False t₂ p₃ p₂ IsVal-False))  
   Progress (App (App e₁ e₃) e₂) t₂ (Type-App t₁ (App e₁ e₃) t₂ .e₂ p₁ p₂) with Progress (App e₁ e₃) (Function t₁ t₂) p₁
-  Progress (App (App e₁ e₃) e₂) t₂ (Type-App t₁ (App e₁ e₃) t₂ .e₂ p₁ p₂)       | inj₁ ()
-  Progress (App (App e₁ e₃) e₂) t₂ (Type-App t₁ (App e₁ e₃) t₂ .e₂ p₁ p₂)       | inj₂ pₓ = inj₂ ((App (proj₁ pₓ) e₂) , (Execution-App₁ (App e₁ e₃) e₂ (proj₁ pₓ) (proj₂ pₓ)))
+  ...                                                                                                                   | inj₁ ()
+  ...                                                                                                                   | inj₂ (e′ , x) = inj₂ ((App e′ e₂) , (Execution-App₁ (App e₁ e₃) e₂ e′ x))
   Progress (App True e₂) t₂ (Type-App t₁ True t₂ e₂ () p₂) 
   Progress (App False e₂) t₂ (Type-App t₁ False t₂ e₂ () p₂)
 
