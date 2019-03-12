@@ -1,0 +1,59 @@
+\documentclass[12pt, letterpaper]{article}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{enumerate}
+\usepackage{graphicx}
+\usepackage[margin=1in]{geometry}
+\usepackage{cite}
+\usepackage{url}
+\usepackage{setspace}
+\usepackage{fancyvrb}
+
+\DefineVerbatimEnvironment
+  {code}{Verbatim}
+  {} 
+\title{Comparing Proof Techniques on the Simply Typed Lambda Calculus between ITT and HoTT}
+\author{Yanjun Yang, 2020\\Advisor: David Walker}
+\date{\today}
+
+\begin{document}
+\doublespacing
+\maketitle
+
+%%-----------BEGIN WORK------------------------------------
+
+\section{Extrinsically Typed $\lambda^{\to}$ with de Brujin Indices in ITT}
+\begin{flushleft}
+First, we worked with an extrinsically typed lambda calculus. In an extrinsically typed lambda calculus, the type of the lambda term exists separately from the lambda term itself. In this language, there are two types: a base type Boolean which contains normal forms are True and False, and a type-constructor $t\to t'$ whose normal forms are all well-typed lambda abstractions. There are additionally two other terms in the language, function application and variables, whose names are de Brujin indices. Contexts in this language are an ordered list of types of terms. The following is the definition in Agda:
+\begin{code}
+data Type : Set where
+    Boolean : Type
+    Function : Type → Type → Type
+
+  data Type-Box : Type → Set where
+    Box : (t : Type) → Type-Box t
+
+  data Context : Set where
+    Empty : Context
+    _,_ : Context → Type → Context
+
+  Variable : Context → Set
+  Variable Empty = ⊥
+  Variable (Γ , t) = (Variable Γ) ⊎ (Type-Box t)
+  
+  data Term (Γ : Context) : Set where
+    Var : Variable Γ → Term Γ
+    Fun : ∀ t → Term (Γ , t) → Term Γ
+    App : Term Γ → Term Γ → Term Γ
+    True : Term Γ
+    False : Term Γ
+\end{code}
+\end{flushleft}
+
+\section{Intrinsically Typed $\lambda^{\to}$ with de Brujin Indices in ITT}
+
+\bibliography{bib}
+\bibliographystyle{unsrt}
+\end{document}

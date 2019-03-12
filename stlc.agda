@@ -58,17 +58,10 @@ module stlc where
   Uniqueness-of-Type Γ True .Boolean .Boolean Type-True Type-True = refl
   Uniqueness-of-Type Γ False .Boolean .Boolean Type-False Type-False = refl
 
-  data IsVal-Proof (Γ : Context) : Term Γ → Set where
-    IsVal-True : IsVal-Proof Γ True
-    IsVal-False : IsVal-Proof Γ False
-    IsVal-Fun : (t : Type) (e : Term (Γ , t)) (t′ : Type) → Type-Proof Γ (Fun t e) (Function t t′) → IsVal-Proof Γ (Fun t e)
-
-  var-equal : ∀ Γ → Variable Γ → Variable Γ → Bool
-  var-equal (Δ , t) (inj₂ _) (inj₂ _) = true
-  var-equal (Δ , t) (inj₁ _) (inj₂ _) = false
-  var-equal (Δ , t) (inj₂ _) (inj₁ _) = false
-  var-equal (Δ , t) (inj₁ i) (inj₁ j) = var-equal Δ i j
-  var-equal Empty ()
+  data IsVal-Proof : Term Empty → Set where
+    IsVal-True : IsVal-Proof True
+    IsVal-False : IsVal-Proof False
+    IsVal-Fun : (t : Type) (e : Term (Empty , t)) (t′ : Type) → Type-Proof Empty (Fun t e) (Function t t′) → IsVal-Proof (Fun t e)
   
   _-_ : ∀ Γ → Variable Γ → Context
   (Δ , t) - (inj₂ (Box t)) = Δ
@@ -129,13 +122,13 @@ module stlc where
   subst : ∀ Γ v t e₂ e₁ → Type-Proof (Γ - v) e₂ (type-var Γ v) → Type-Proof Γ e₁ t → Term (Γ - v)
   subst Γ v t e₂ e₁ p p′ = proj₁ (subst-aux Γ v t e₂ e₁ p p′)
 
-  data Execution-Proof (Γ : Context) : Term Γ → Term Γ → Set where
-    Execution-App₁ : (e₁ : Term Γ) (e₂ : Term Γ) (e₁′ : Term Γ) → Execution-Proof Γ e₁ e₁′ → Execution-Proof Γ (App e₁ e₂) (App e₁′ e₂)
-    Execution-App₂ : (e₁ : Term Γ) (e₂ : Term Γ) (e₂′ : Term Γ) → IsVal-Proof Γ e₁ → Execution-Proof Γ e₂ e₂′ → Execution-Proof Γ (App e₁ e₂) (App e₁ e₂′)
-    Execution-AppFun : (t₁ : Type) (e₁ : Term (Γ , t₁)) (e₂ : Term Γ) (t₂ : Type) (p : Type-Proof Γ e₂ t₁) (p′ : Type-Proof (Γ , t₁) e₁ t₂) → IsVal-Proof Γ e₂
-      → Execution-Proof Γ (App (Fun t₁ e₁) e₂) (subst (Γ , t₁) (inj₂ (Box t₁)) t₂ e₂ e₁ p p′)
+  data Execution-Proof : Term Empty → Term Empty → Set where
+    Execution-App₁ : (e₁ e₂ e₁′ : Term Empty) → Execution-Proof e₁ e₁′ → Execution-Proof (App e₁ e₂) (App e₁′ e₂)
+    Execution-App₂ : (e₁ e₂ e₂′ : Term Empty) → IsVal-Proof e₁ → Execution-Proof e₂ e₂′ → Execution-Proof (App e₁ e₂) (App e₁ e₂′)
+    Execution-AppFun : (t₁ : Type) (e₁ : Term (Empty , t₁)) (e₂ : Term Empty) (t₂ : Type) (p : Type-Proof Empty e₂ t₁) (p′ : Type-Proof (Empty , t₁) e₁ t₂) → IsVal-Proof e₂
+      → Execution-Proof (App (Fun t₁ e₁) e₂) (subst (Empty , t₁) (inj₂ (Box t₁)) t₂ e₂ e₁ p p′)
 
-  Progress : (e : Term Empty) (t : Type) → Type-Proof Empty e t → (IsVal-Proof Empty e) ⊎ (Σ (Term Empty) (λ e′ → Execution-Proof Empty e e′))
+  Progress : (e : Term Empty) (t : Type) → Type-Proof Empty e t → (IsVal-Proof e) ⊎ (Σ (Term Empty) (λ e′ → Execution-Proof e e′))
   Progress True t Type-True = inj₁ (IsVal-True)
   Progress False t Type-False = inj₁ (IsVal-False)
   Progress (Var v) t (Type-Var ())
@@ -157,7 +150,7 @@ module stlc where
   Preservation-Subst : ∀ Γ v t e₂ e₁ p p′ → Type-Proof (Γ - v) (subst Γ v t e₂ e₁ p p′) t
   Preservation-Subst Γ v t e₂ e₁ p p′ = proj₂ (subst-aux Γ v t e₂ e₁ p p′)
 
-  Preservation : (e : Term Empty) (t : Type) (e′ : Term Empty) → Type-Proof Empty e t → Execution-Proof Empty e e′ → Type-Proof Empty e′ t
+  Preservation : (e : Term Empty) (t : Type) (e′ : Term Empty) → Type-Proof Empty e t → Execution-Proof e e′ → Type-Proof Empty e′ t
   Preservation .True .Boolean e′ Type-True ()
   Preservation .False .Boolean e′ Type-False ()
   Preservation .(Var v) .(type-var Empty v) e′ (Type-Var v) ()
