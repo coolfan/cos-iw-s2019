@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6350 64-bit) (preloaded format=pdflatex 2017.9.20)  4 MAR 2019 12:21
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6350 64-bit) (preloaded format=pdflatex 2017.9.20)  26 MAR 2019 13:03
 entering extended mode
 **./writeup-draft.tex
 (writeup-draft.tex
@@ -187,34 +187,284 @@ Style option: `fancyvrb' v3.2a <2019/01/15> (tvz)
 \c@FancyVerbLine=\count104
 \FV@StepNumber=\count105
 \FV@OutFile=\write3
-) (writeup-draft.aux)
+)
+("C:\Program Files\MiKTeX 2.9\tex\latex\ebproof\ebproof.sty"
+("C:\Program Files\MiKTeX 2.9\tex\latex\l3kernel\expl3.sty"
+Package: expl3 2017/12/16 L3 programming layer (loader) 
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\l3kernel\expl3-code.tex"
+Package: expl3 2017/12/16 L3 programming layer (code)
+\c_max_int=\count106
+\l_tmpa_int=\count107
+\l_tmpb_int=\count108
+\g_tmpa_int=\count109
+\g_tmpb_int=\count110
+\g__intarray_font_int=\count111
+\g__prg_map_int=\count112
+\c_log_iow=\count113
+\l_iow_line_count_int=\count114
+\l__iow_line_target_int=\count115
+\l__iow_one_indent_int=\count116
+\l__iow_indent_int=\count117
+\c_zero_dim=\dimen122
+\c_max_dim=\dimen123
+\l_tmpa_dim=\dimen124
+\l_tmpb_dim=\dimen125
+\g_tmpa_dim=\dimen126
+\g_tmpb_dim=\dimen127
+\c_zero_skip=\skip49
+\c_max_skip=\skip50
+\l_tmpa_skip=\skip51
+\l_tmpb_skip=\skip52
+\g_tmpa_skip=\skip53
+\g_tmpb_skip=\skip54
+\c_zero_muskip=\muskip12
+\c_max_muskip=\muskip13
+\l_tmpa_muskip=\muskip14
+\l_tmpb_muskip=\muskip15
+\g_tmpa_muskip=\muskip16
+\g_tmpb_muskip=\muskip17
+\l_keys_choice_int=\count118
+\c__fp_leading_shift_int=\count119
+\c__fp_middle_shift_int=\count120
+\c__fp_trailing_shift_int=\count121
+\c__fp_big_leading_shift_int=\count122
+\c__fp_big_middle_shift_int=\count123
+\c__fp_big_trailing_shift_int=\count124
+\c__fp_Bigg_leading_shift_int=\count125
+\c__fp_Bigg_middle_shift_int=\count126
+\c__fp_Bigg_trailing_shift_int=\count127
+\c__fp_rand_size_int=\count128
+\c__fp_rand_four_int=\count129
+\c__fp_rand_eight_int=\count130
+\l__sort_length_int=\count131
+\l__sort_min_int=\count132
+\l__sort_top_int=\count133
+\l__sort_max_int=\count134
+\l__sort_true_max_int=\count135
+\l__sort_block_int=\count136
+\l__sort_begin_int=\count137
+\l__sort_end_int=\count138
+\l__sort_A_int=\count139
+\l__sort_B_int=\count140
+\l__sort_C_int=\count141
+\l__tl_build_start_index_int=\count142
+\l__tl_build_index_int=\count143
+\l__tl_analysis_normal_int=\count144
+\l__tl_analysis_index_int=\count145
+\l__tl_analysis_nesting_int=\count146
+\l__tl_analysis_type_int=\count147
+\l__regex_internal_a_int=\count148
+\l__regex_internal_b_int=\count149
+\l__regex_internal_c_int=\count150
+\l__regex_balance_int=\count151
+\l__regex_group_level_int=\count152
+\l__regex_mode_int=\count153
+\c__regex_cs_in_class_mode_int=\count154
+\c__regex_cs_mode_int=\count155
+\l__regex_catcodes_int=\count156
+\l__regex_default_catcodes_int=\count157
+\c__regex_catcode_D_int=\count158
+\c__regex_catcode_S_int=\count159
+\c__regex_catcode_L_int=\count160
+\c__regex_catcode_O_int=\count161
+\c__regex_catcode_A_int=\count162
+\c__regex_all_catcodes_int=\count163
+\l__regex_show_lines_int=\count164
+\l__regex_min_state_int=\count165
+\l__regex_max_state_int=\count166
+\l__regex_left_state_int=\count167
+\l__regex_right_state_int=\count168
+\l__regex_capturing_group_int=\count169
+\l__regex_min_pos_int=\count170
+\l__regex_max_pos_int=\count171
+\l__regex_curr_pos_int=\count172
+\l__regex_start_pos_int=\count173
+\l__regex_success_pos_int=\count174
+\l__regex_curr_char_int=\count175
+\l__regex_curr_catcode_int=\count176
+\l__regex_last_char_int=\count177
+\l__regex_case_changed_char_int=\count178
+\l__regex_curr_state_int=\count179
+\l__regex_step_int=\count180
+\l__regex_min_active_int=\count181
+\l__regex_max_active_int=\count182
+\l__regex_replacement_csnames_int=\count183
+\l__regex_match_count_int=\count184
+\l__regex_min_submatch_int=\count185
+\l__regex_submatch_int=\count186
+\l__regex_zeroth_submatch_int=\count187
+\g__debug_trace_regex_int=\count188
+\c_empty_box=\box29
+\l_tmpa_box=\box30
+\l_tmpb_box=\box31
+\g_tmpa_box=\box32
+\g_tmpb_box=\box33
+\l__box_top_dim=\dimen128
+\l__box_bottom_dim=\dimen129
+\l__box_left_dim=\dimen130
+\l__box_right_dim=\dimen131
+\l__box_top_new_dim=\dimen132
+\l__box_bottom_new_dim=\dimen133
+\l__box_left_new_dim=\dimen134
+\l__box_right_new_dim=\dimen135
+\l__box_internal_box=\box34
+\l__coffin_internal_box=\box35
+\l__coffin_internal_dim=\dimen136
+\l__coffin_offset_x_dim=\dimen137
+\l__coffin_offset_y_dim=\dimen138
+\l__coffin_x_dim=\dimen139
+\l__coffin_y_dim=\dimen140
+\l__coffin_x_prime_dim=\dimen141
+\l__coffin_y_prime_dim=\dimen142
+\c_empty_coffin=\box36
+\l__coffin_aligned_coffin=\box37
+\l__coffin_aligned_internal_coffin=\box38
+\l_tmpa_coffin=\box39
+\l_tmpb_coffin=\box40
+\l__coffin_display_coffin=\box41
+\l__coffin_display_coord_coffin=\box42
+\l__coffin_display_pole_coffin=\box43
+\l__coffin_display_offset_dim=\dimen143
+\l__coffin_display_x_dim=\dimen144
+\l__coffin_display_y_dim=\dimen145
+\l__coffin_bounding_shift_dim=\dimen146
+\l__coffin_left_corner_dim=\dimen147
+\l__coffin_right_corner_dim=\dimen148
+\l__coffin_bottom_corner_dim=\dimen149
+\l__coffin_top_corner_dim=\dimen150
+\l__coffin_scaled_total_height_dim=\dimen151
+\l__coffin_scaled_width_dim=\dimen152
+)
+("C:\Program Files\MiKTeX 2.9\tex\latex\l3kernel\l3pdfmode.def"
+File: l3pdfmode.def 2017/03/18 v L3 Experimental driver: PDF mode
+\l__driver_color_stack_int=\count189
+\l__driver_tmp_box=\box44
+))
+("C:\Program Files\MiKTeX 2.9\tex\latex\l3packages\xparse\xparse.sty"
+Package: xparse 2017/12/16 L3 Experimental document command parser
+\l__xparse_current_arg_int=\count190
+\g__xparse_grabber_int=\count191
+\l__xparse_m_args_int=\count192
+\l__xparse_mandatory_args_int=\count193
+\l__xparse_v_nesting_int=\count194
+)
+Package: ebproof 2017/05/17 v2.0 EB's proof trees
+\l_ebproof_separation_dim=\dimen153
+\l_ebproof_rule_margin_dim=\dimen154
+\l_ebproof_rule_thickness_dim=\dimen155
+\l_ebproof_rule_separation_dim=\dimen156
+\l_ebproof_rule_dash_length_dim=\dimen157
+\l_ebproof_rule_dash_space_dim=\dimen158
+\l_ebproof_label_separation_dim=\dimen159
+\l_ebproof_label_axis_dim=\dimen160
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \ebproofnewrulestyle with sig. 'mm' on line 78.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \ebproofnewstyle with sig. 'mm' on line 140.
+.................................................
+\l_ebproof_transit_dim=\dimen161
+\g_ebproof_level_int=\count195
+\g_ebproof_stack_box=\box45
+\l_ebproof_a_box=\box46
+\l_ebproof_b_box=\box47
+\l_ebproof_c_box=\box48
+\l_ebproof_d_box=\box49
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \ebproofset with sig. 'm' on line 615.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \ebproofhypo with sig. 'O{}m' on line 623.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \ebproofinfer with sig. 'O{}mO{}m' on line 635.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \ebproofellipsis with sig. 'mm' on line 659.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \ebproofrewrite with sig. 'm' on line 686.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \ebproofdelims with sig. 'mm' on line 712.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \ebproofAlter with sig. 'm' on line 722.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \ebproofDelims with sig. '' on line 724.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \ebproofEllipsis with sig. '' on line 726.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \ebproofHypo with sig. '' on line 728.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-command"
+. 
+. Defining command \ebproofInfer with sig. '' on line 730.
+.................................................
+.................................................
+. LaTeX info: "xparse/define-environment"
+. 
+. Defining environment 'prooftree' with sig. 'sO{}' on line 763.
+.................................................
+)
+\c@theorem=\count196
+
+(writeup-draft.aux)
 \openout1 = `writeup-draft.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 21.
-LaTeX Font Info:    ... okay on input line 21.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 21.
-LaTeX Font Info:    ... okay on input line 21.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 21.
-LaTeX Font Info:    ... okay on input line 21.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 21.
-LaTeX Font Info:    ... okay on input line 21.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 21.
-LaTeX Font Info:    ... okay on input line 21.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 21.
-LaTeX Font Info:    ... okay on input line 21.
-
-("C:\Program Files\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+ ("C:\Program Files\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count106
-\scratchdimen=\dimen122
-\scratchbox=\box29
-\nofMPsegments=\count107
-\nofMParguments=\count108
+\scratchcounter=\count197
+\scratchdimen=\dimen162
+\scratchbox=\box50
+\nofMPsegments=\count198
+\nofMParguments=\count199
 \everyMPshowfont=\toks29
-\MPscratchCnt=\count109
-\MPscratchDim=\dimen123
-\MPnumerator=\count110
-\makeMPintoPDFobject=\count111
+\MPscratchCnt=\count266
+\MPscratchDim=\dimen163
+\MPnumerator=\count267
+\makeMPintoPDFobject=\count268
 \everyMPtoPDFconversion=\toks30
 ) ("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\pdftexcmds.sty"
 Package: pdftexcmds 2017/03/19 v0.25 Utility functions of pdfTeX for LuaTeX (HO
@@ -292,84 +542,46 @@ G,.JBIG2,.JB2,.eps]
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-LaTeX Font Info:    Try loading font information for U+msa on input line 23.
+LaTeX Font Info:    Try loading font information for U+msa on input line 34.
 ("C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\umsa.fd"
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 23.
+LaTeX Font Info:    Try loading font information for U+msb on input line 34.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\umsb.fd"
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-)
-Missing character: There is no â in font cmtt12!
-Missing character: There is no † in font cmtt12!
-Missing character: There is no ’ in font cmtt12!
-Missing character: There is no â in font cmtt12!
-Missing character: There is no † in font cmtt12!
-Missing character: There is no ’ in font cmtt12!
-Missing character: There is no â in font cmtt12!
-Missing character: There is no † in font cmtt12!
-Missing character: There is no ’ in font cmtt12!
-Missing character: There is no â in font cmtt12!
-Missing character: There is no † in font cmtt12!
-Missing character: There is no ’ in font cmtt12!
- [1
+) [1
 
 {C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}]
-Missing character: There is no â in font cmtt12!
-Missing character: There is no † in font cmtt12!
-Missing character: There is no ’ in font cmtt12!
-Missing character: There is no â in font cmtt12!
-Missing character: There is no † in font cmtt12!
-Missing character: There is no ’ in font cmtt12!
-Missing character: There is no â in font cmtt12!
-Missing character: There is no † in font cmtt12!
-Missing character: There is no ’ in font cmtt12!
-Missing character: There is no â in font cmtt12!
-Missing character: There is no Š in font cmtt12!
-Missing character: There is no ¥ in font cmtt12!
-Missing character: There is no â in font cmtt12!
-Missing character: There is no Š in font cmtt12!
-Missing character: There is no Ž in font cmtt12!
-Missing character: There is no â in font cmtt12!
-Missing character: There is no † in font cmtt12!
-Missing character: There is no ’ in font cmtt12!
-Missing character: There is no â in font cmtt12!
-Missing character: There is no ˆ in font cmtt12!
-Missing character: There is no € in font cmtt12!
-Missing character: There is no â in font cmtt12!
-Missing character: There is no † in font cmtt12!
-Missing character: There is no ’ in font cmtt12!
-Missing character: There is no â in font cmtt12!
-Missing character: There is no † in font cmtt12!
-Missing character: There is no ’ in font cmtt12!
-Missing character: There is no â in font cmtt12!
-Missing character: There is no † in font cmtt12!
-Missing character: There is no ’ in font cmtt12!
-Missing character: There is no â in font cmtt12!
-Missing character: There is no † in font cmtt12!
-Missing character: There is no ’ in font cmtt12!
+Overfull \hbox (3.38466pt too wide) detected at line 94
+[]    []    []
+ []
 
+[2] [3] [4] [5]
 No file writeup-draft.bbl.
-[2] (writeup-draft.aux) ) 
+[6] (writeup-draft.aux) ) 
 Here is how much of TeX's memory you used:
- 3537 strings out of 493323
- 47957 string characters out of 3139066
- 116671 words of memory out of 3000000
- 7017 multiletter control sequences out of 15000+200000
- 13205 words of font info for 52 fonts, out of 3000000 for 9000
+ 11897 strings out of 493323
+ 222586 string characters out of 3139066
+ 267508 words of memory out of 3000000
+ 15355 multiletter control sequences out of 15000+200000
+ 540322 words of font info for 61 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 39i,6n,32p,649b,314s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 40i,11n,33p,10355b,323s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfon
 ts/cm/cmbx12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cm
-mi12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb>
-<C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Progr
-am Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files
-/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Program Files/MiKTeX 2
-.9/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on writeup-draft.pdf (2 pages, 76001 bytes).
+mi12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi8.pfb>
+<C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Progr
+am Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Program Files/
+MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Program Files/MiKTeX 2.9
+/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/t
+ype1/public/amsfonts/cm/cmsy6.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/publ
+ic/amsfonts/cm/cmsy8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfon
+ts/cm/cmti12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/symbo
+ls/msbm10.pfb>
+Output written on writeup-draft.pdf (6 pages, 132275 bytes).
 PDF statistics:
- 37 PDF objects out of 1000 (max. 8388607)
+ 65 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

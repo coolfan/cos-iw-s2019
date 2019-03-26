@@ -12,11 +12,6 @@ module stlc-extrinsic where
               (P : M ≡ N) → C M → C N
   transport C refl x = x
 
-  apd  : ∀ {l1 l2} {B : Set l1} {E : B → Set l2} {b₁ b₂ : B} 
-         (f : (x : B) → E x) (β : b₁ ≡ b₂) 
-      → transport E β (f b₁) ≡ (f b₂) 
-  apd f refl = refl
-
   sym : ∀ {a} {A : Set a} {M N : A} → (M ≡ N) → (N ≡ M)
   sym refl = refl
 
@@ -47,13 +42,6 @@ module stlc-extrinsic where
   num-less zero (suc j) = Unit
   num-less (suc i) zero = ⊥
   num-less (suc i) (suc j) = num-less i j
-
-  num-less-same-false : ∀ i → num-less i i ≡ ⊥
-  num-less-same-false zero = refl
-  num-less-same-false (suc i) = num-less-same-false i
-
-  neq-of-less : ∀ i j → num-less i j → (i ≡ j) → ⊥
-  neq-of-less i .i p refl = transport (λ X → X) (num-less-same-false i) p
   
   data Type : Set where
     Boolean : Type
@@ -94,33 +82,22 @@ module stlc-extrinsic where
   name-of-de-brujin-index [] n = nothing
   name-of-de-brujin-index ((fst , snd) ∷ Γ) zero = just fst
   name-of-de-brujin-index ((fst , snd) ∷ Γ) (suc n) = name-of-de-brujin-index Γ n
-{-
-  name-de-brujin-index-match : ∀ Γ n x₁ → (name-of-de-brujin-index Γ n ≡ just x₁) ⊎ ((name-of-de-brujin-index Γ n ≡ just x₁) → ⊥)
-  name-de-brujin-index-match Γ n x with name-of-de-brujin-index Γ n
-  ...                                                              | nothing = inj₂ (λ ())
-  ...                                                              | just y with name-eq y x
-  ...                                                                                 | inj₁ refl = inj₁ refl
-  ...                                                                                 | inj₂ neq = inj₂ (lift neq)
-    where
-    lift : ∀ {x y : Name} → ((x ≡ y) → ⊥) → ((just x ≡ just y) → ⊥)
-    lift neq p = neq p
--}
 
   _∈_ : (Name × Type) → Context → Set
   (x , t) ∈ Γ = type-of-name Γ x ≡ just t
 
-  _∈′_ : (ℕ × Name × Type) → Context → Set
-  (i , x , t) ∈′ Γ = (type-of-de-brujin-index Γ i ≡ just t) × (name-of-de-brujin-index Γ i ≡ just x)
+  _∈-weak_ : (ℕ × Name × Type) → Context → Set
+  (i , x , t) ∈-weak Γ = (type-of-de-brujin-index Γ i ≡ just t) × (name-of-de-brujin-index Γ i ≡ just x)
 
-  _∈₂_ : (ℕ × Name × Type) → Context → Set
-  (i , x , t) ∈₂ Γ = ((x , t) ∈ Γ) × ((i , x , t) ∈′ Γ)
+  _∈-strong_ : (ℕ × Name × Type) → Context → Set
+  (i , x , t) ∈-strong Γ = ((x , t) ∈ Γ) × ((i , x , t) ∈-weak Γ)
     
   weaken-in-context : ∀ Γ n t n′ t′ → (n , t) ∈ Γ → ((n ≡ n′) → ⊥) → (n , t) ∈ ((n′ , t′) ∷ Γ)
   weaken-in-context Γ n t n′ t′ p neq with name-eq n n′
   ...                                                              | inj₁ refl = exfalso (neq refl)
   ...                                                              | inj₂ _ = p
 
-  weaken-in₂-context : ∀ Γ i n t n′ t′ → (i , n , t) ∈₂ Γ → ((n ≡ n′) → ⊥) → (suc i , n , t) ∈₂ ((n′ , t′) ∷ Γ)
+  weaken-in₂-context : ∀ Γ i n t n′ t′ → (i , n , t) ∈-strong Γ → ((n ≡ n′) → ⊥) → (suc i , n , t) ∈-strong ((n′ , t′) ∷ Γ)
   weaken-in₂-context Γ i n t n′ t′ p neq with name-eq n n′
   ...                                                                  | inj₁ refl = exfalso (neq refl)
   ...                                                                  | inj₂ _ = p
@@ -205,14 +182,14 @@ module stlc-extrinsic where
     ...                       | inj₁ refl = refl
     ...                       | inj₂ neq = exfalso (neq refl)
 
-  shadowing : ∀ Γ i j n t t₁ e t′ → (i , n , t) ∈₂ Γ → Type-Proof Γ e t′ → (j , n , t₁) ∈′ Γ → (num-less i j) → Type-Proof (remove Γ j) e t′
+  shadowing : ∀ Γ i j n t t₁ e t′ → (i , n , t) ∈-strong Γ → Type-Proof Γ e t′ → (j , n , t₁) ∈-weak Γ → (num-less i j) → Type-Proof (remove Γ j) e t′
   shadowing Γ i j n t tₐ .True .Boolean p Type-True p′′ neq = Type-True
   shadowing Γ i j n t tₐ .False .Boolean p Type-False p′′ neq = Type-False
   shadowing Γ i j n t tₐ .(Var n₁) t′ p (Type-Var n₁ .t′ p₁) p′′ neq with name-eq n₁ n
   ...                                                                                                        | inj₂ neq′ = unaffected Γ j n₁ t′ (chain-eq-neq (proj₂ p′′) (lift-eq-just (λ x → neq′ (sym x)))) (Type-Var n₁ t′ p₁)
-  shadowing Γ i j .n₁ t tₐ .(Var n₁) t′ p (Type-Var n₁ .t′ p₁) p′′ neq | inj₁ refl = Type-Var n₁ t′ (shadowing-var Γ i j n₁ t′ tₐ (transport (λ X → (i , n₁ , X) ∈₂ Γ) (peel-eq-just (trans (sym (proj₁ p)) p₁)) p) p′′ neq)
+  shadowing Γ i j .n₁ t tₐ .(Var n₁) t′ p (Type-Var n₁ .t′ p₁) p′′ neq | inj₁ refl = Type-Var n₁ t′ (shadowing-var Γ i j n₁ t′ tₐ (transport (λ X → (i , n₁ , X) ∈-strong Γ) (peel-eq-just (trans (sym (proj₁ p)) p₁)) p) p′′ neq)
     where
-    shadowing-var : ∀ Γ i j n t t₁ → (i , n , t) ∈₂ Γ → (j , n , t₁) ∈′ Γ → num-less i j → (n , t) ∈ (remove Γ j)
+    shadowing-var : ∀ Γ i j n t t₁ → (i , n , t) ∈-strong Γ → (j , n , t₁) ∈-weak Γ → num-less i j → (n , t) ∈ (remove Γ j)
     shadowing-var [] i j n t tₐ (() , snd) p′ neq
     shadowing-var ((fst , snd) ∷ Γ) i j n t tₐ p p′ neq with name-eq fst n
     shadowing-var ((fst , snd) ∷ Γ) i j .fst t tₐ p p′ neq | inj₁ refl with name-eq fst fst
@@ -233,7 +210,7 @@ module stlc-extrinsic where
     shadowing-var ((fst , snd) ∷ Γ) i (suc j) .fst t tₐ p p′ neq | inj₂ neq′ | inj₁ refl = exfalso (neq′ refl)
     shadowing-var ((fst , snd) ∷ Γ) zero (suc j) n t tₐ p p′ neq | inj₂ neq′ | inj₂ y = exfalso (neq′ (sym (equality Γ n t fst snd ((weaken-in-context Γ n t fst snd (proj₁ p) y) , (proj₂ p)))))
       where
-      equality : ∀ Γ n t n′ t′ → (zero , n , t) ∈₂ ((n′ , t′) ∷ Γ) → (n ≡ n′)
+      equality : ∀ Γ n t n′ t′ → (zero , n , t) ∈-strong ((n′ , t′) ∷ Γ) → (n ≡ n′)
       equality Γ n t .n .t (fst , refl , refl) = refl
     shadowing-var ((fst , snd) ∷ Γ) (suc i) (suc j) n t tₐ p p′ neq | inj₂ neq′ | inj₂ _ = shadowing-var Γ i j n t tₐ p p′ neq
   shadowing Γ i j n t tₐ .(Fun n₁ t₁ e) .(Function t₁ t′) p (Type-Fun n₁ t₁ t′ e p′) p′′ neq with name-eq n₁ n
@@ -251,7 +228,7 @@ module stlc-extrinsic where
   ...                                                                                                                                                              | pₐ = Type-Fun n₁ t₁ t′ e pₐ
   shadowing Γ i j n t tₐ .(App e₁ e₂) t′ p (Type-App t₁ .t′ e₁ e₂ p′ p′₁) p′′ neq = Type-App t₁ t′ e₁ e₂ (shadowing Γ i j n t tₐ e₁ (Function t₁ t′) p p′ p′′ neq) (shadowing Γ i j n t tₐ e₂ t₁ p p′₁ p′′ neq)
 
-  subst-aux : ∀ Γ i n t t′ e₂ e₁ (p : (i , n , t) ∈₂ Γ) → Type-Proof [] e₂ t → Type-Proof Γ e₁ t′ → Σ Term (λ x → Type-Proof (remove Γ i) x t′)
+  subst-aux : ∀ Γ i n t t′ e₂ e₁ (p : (i , n , t) ∈-strong Γ) → Type-Proof [] e₂ t → Type-Proof Γ e₁ t′ → Σ Term (λ x → Type-Proof (remove Γ i) x t′)
   subst-aux Γ i n t .Boolean e₂ .True p p₂ Type-True = True , Type-True
   subst-aux Γ i n t .Boolean e₂ .False p p₂ Type-False = True , Type-True
   subst-aux Γ i n t t′ e₂ .(Var n₁) p p₂ (Type-Var n₁ .t′ p₁) with name-eq n n₁
@@ -269,7 +246,7 @@ module stlc-extrinsic where
   subst-aux Γ i n t t′ e₂ .(App e₁ e₃) p p₂ (Type-App t₁ .t′ e₁ e₃ p₁ p₃) with subst-aux Γ i n t (Function t₁ t′) e₂ e₁ p p₂ p₁ | subst-aux Γ i n t t₁ e₂ e₃ p p₂ p₃
   ...                                                                                                               | (e₁′ , p₁′)                                                           | (e₂′ , p₂′) = App e₁′ e₂′ , Type-App t₁ t′ e₁′ e₂′ p₁′ p₂′
 
-  subst : ∀ Γ i n t t′ e₂ e₁ (p : (i , n , t) ∈₂ Γ) → Type-Proof [] e₂ t → Type-Proof Γ e₁ t′ → Term
+  subst : ∀ Γ i n t t′ e₂ e₁ (p : (i , n , t) ∈-strong Γ) → Type-Proof [] e₂ t → Type-Proof Γ e₁ t′ → Term
   subst Γ i n t t′ e₂ e₁ p p₂ p₁ = proj₁ (subst-aux Γ i n t t′ e₂ e₁ p p₂ p₁)
 
  
@@ -305,7 +282,7 @@ module stlc-extrinsic where
   Progress .(App (App e₁ e₃) e₂) t (Type-App t₁ .t (App e₁ e₃) e₂ p p₁) | inj₁ ()
   ...                                                                                                                | inj₂ (e′ , pₓ) = inj₂ ((App e′ e₂) , (Execution-App₁ (App e₁ e₃) e₂ e′ pₓ))
 
-  Preservation-Subst : ∀ Γ i n t t′ e₂ e₁ (p : (i , n , t) ∈₂ Γ) (p₂ : Type-Proof [] e₂ t) (p₁ : Type-Proof Γ e₁ t′) → Type-Proof (remove Γ i) (subst Γ i n t t′ e₂ e₁ p p₂ p₁) t′
+  Preservation-Subst : ∀ Γ i n t t′ e₂ e₁ (p : (i , n , t) ∈-strong Γ) (p₂ : Type-Proof [] e₂ t) (p₁ : Type-Proof Γ e₁ t′) → Type-Proof (remove Γ i) (subst Γ i n t t′ e₂ e₁ p p₂ p₁) t′
   Preservation-Subst Γ i n t t′ e₂ e₁ p p₂ p₁ = proj₂ (subst-aux Γ i n t t′ e₂ e₁ p p₂ p₁)
 
   Preservation : (e e′ : Term) (t : Type) → Type-Proof [] e t → Execution-Proof e e′ → Type-Proof [] e′ t
@@ -318,3 +295,27 @@ module stlc-extrinsic where
   Preservation .(App (Fun n t₂ e₁) e₂) .(proj₁ (subst-aux ((n , t₂) ∷ []) 0 n t₂ t′ e₂ e₁ ((helper [] n t₂) , refl , refl) p₃ p₂)) t (Type-App .t₂ .t .(Fun n t₂ e₁) e₂ (Type-Fun .n .t₂ .t .e₁ p) p₁) (Execution-AppFun n t₂ t′ e₁ .e₂ p₂ p₃ x) = transport (λ X → Type-Proof [] (subst ((n , t₂) ∷ []) zero n t₂ t′ e₂ e₁ ((helper [] n t₂) , refl , refl) p₃ p₂) X) (Uniqueness-of-Types [(n , t₂)] e₁ t′ t p₂ p) (Preservation-Subst [(n , t₂)] zero n t₂ t′ e₂ e₁ ((helper [] n t₂) , (refl , refl)) p₃ p₂)
 
 
+  step : (e : Term) (t : Type) → Type-Proof [] e t → Σ Term (λ e′ → Type-Proof [] e′ t)
+  step e t p with Progress e t p
+  ...                    | inj₁ _ = e , p
+  ...                    | inj₂ (e′ , x) = (e′ , Preservation e e′ t p x)
+
+  eval : (e : Term) (t : Type) (n : ℕ) → Type-Proof [] e t → Term
+  eval e _ zero _ = e
+  eval e t (suc n) p with step e t p
+  ...                                | (e′ , p′) = eval e′ t n p′
+
+
+  Id : Term
+  Id = Fun (N 5) (Boolean) (Var (N 5))
+
+  App-of-Id : Term
+  App-of-Id = App Id True
+
+  App-of-Id-Type-Proof : Type-Proof [] App-of-Id Boolean
+  App-of-Id-Type-Proof = Type-App Boolean Boolean (Fun (N 5) Boolean (Var (N 5))) True
+                           (Type-Fun (N 5) Boolean Boolean (Var (N 5))
+                            (Type-Var (N 5) Boolean refl))
+                           Type-True
+
+  
