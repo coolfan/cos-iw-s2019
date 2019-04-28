@@ -1,0 +1,42 @@
+\begin{thebibliography}{1}
+
+\bibitem{church_1940}
+Alonzo Church.
+\newblock A formulation of the simple theory of types.
+\newblock {\em Journal of Symbolic Logic}, 5(2):56–68, 1940.
+
+\bibitem{cchm}
+Cyril Cohen, Thierry Coquand, Simon Huber, and Anders Mörtberg.
+\newblock Cubical type theory: a constructive interpretation of the univalence
+  axiom, 2016.
+
+\bibitem{agda-wiki}
+Ulf~Norell et~al.
+\newblock Agda's documentation, 2019.
+
+\bibitem{howard}
+William~A Howard.
+\newblock The formulae-as-types notion of construction.
+
+\bibitem{martinlof}
+Per Martin-L{\"o}f and Giovanni Sambin.
+\newblock {\em Intuitionistic type theory}, volume~9.
+\newblock Bibliopolis Naples, 1984.
+
+\bibitem{tapl}
+Benjamin~C. Pierce.
+\newblock {\em Types and Programming Languages}.
+\newblock The MIT Press, 1st edition, 2002.
+
+\bibitem{robinson}
+John~Alan Robinson.
+\newblock A machine-oriented logic based on the resolution principle.
+\newblock {\em J. ACM}, 12:23--41, 1965.
+
+\bibitem{hottbook}
+The {Univalent Foundations Program}.
+\newblock {\em Homotopy Type Theory: Univalent Foundations of Mathematics}.
+\newblock \url{https://homotopytypetheory.org/book}, Institute for Advanced
+  Study, 2013.
+
+\end{thebibliography}
